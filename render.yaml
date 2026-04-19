@@ -1,0 +1,18 @@
+# Minimal Render Blueprint (POC). SQLite uses ephemeral instance disk unless you attach a disk.
+# After deploy, add a Render Cron Job (Dashboard) hitting:
+#   GET https://<service-host>/api/ingest?cron_secret=<CRON_SECRET>
+# on trading days (UTC vs IST as you prefer).
+services:
+  - type: web
+    name: nse-deals
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run db:push && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        value: file:./data/app.sqlite
+      - key: CRON_SECRET
+        generateValue: true
